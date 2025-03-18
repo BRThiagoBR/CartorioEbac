@@ -11,6 +11,7 @@ int registro()//função para cadastrar usuário
 	char nome[40];
 	char sobrenome[40];
 	char cargo[40];
+	char escolha;
 	
 	printf("\tDigite o CPF a ser cadastrado\n\n");//coletar informação do usuário
 	scanf("%s",cpf);//%s refere=se a string
@@ -73,6 +74,26 @@ int registro()//função para cadastrar usuário
 	printf("\tCadastro realizado com sucesso!\n\n");
 	
 	system("pause");
+	
+	system("cls");
+	
+	printf("\tDeseja realizar mais algum cadastro?\n\n (1)SIM \n (2)NÃO \n\n");
+	scanf("%d",&escolha);//capturar a resposta
+	
+	system("cls");
+	
+		switch (escolha)
+		{
+			case 1:
+				registro();
+				break;
+			
+			case 2:
+				printf("\tSaindo do sistema...\n\n");
+				return 0;
+				break;
+				
+		}
 	
 	}
 
