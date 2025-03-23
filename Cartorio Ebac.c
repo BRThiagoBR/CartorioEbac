@@ -3,6 +3,84 @@
 #include <locale.h> //biblioteca de alocações de texto por região
 #include <string.h>//biblioteca responsável por cuidar das strings
 
+#define admin_user "admin"
+#define adm_pass "adm"
+#define file_name "usuarios.txt"
+//O COMANDO #DEFINE, É UTILIZADO PARA SETAR UM NOME "PADRÃO" PARA VARIÁVEL DESEJADA.
+//EXEMPLO: TODO LUGAR QUE ESTIVER file_name, será "usuarios.txt", INDEPENDENTE DE ONDE ESTIVER NO CODIGO
+//POSSIBILITA A FACILIDADE DE MANUTENÇÃO NO CODIGO.
+
+
+
+void login()//sistema de login do programa
+{
+	char login[50], senha[50], senhaarmazenada[50];
+	
+	
+	printf("\t\t\tDigite seu login:\n\n");
+	
+	scanf("%s",login);//armazenando o login
+	
+	FILE*file = fopen(login, "r");//abrindo o arquivo
+	if (file == NULL)
+	{
+		printf("\t\t\tUsuário não cadastrado!\n\n");
+		return;
+	}
+	
+	fscanf(file, "%*[^,], %s", senhaarmazenada);//Lê a senha armazenada no arquivo (ignora o login)
+	fclose(file);
+	
+	
+	printf("\t\t\tDigite sua senha:\n\n");
+	scanf("%s",senha);//armazenando senha
+	
+	if(strcmp(senha, senhaarmazenada) == 0)//compara a senha digitada com armazenada
+	{
+		menu();
+	}
+	else
+		printf("\t\t\tSenha incorreta!\n\n");
+}
+
+void cadastro()//sistema de criação de login do programa
+{
+	char adm[20];
+	char arquivo[50];
+	char login[50], senha[50];
+	
+	printf("Digite a senha do administrador para realizar um novo cadastro:\n\n");
+	scanf("%s", adm);
+	
+	if(strcmp(adm, adm_pass) ==0)//compara a senha digitada com a definida em #define
+	{
+		
+		printf("\t\t\tDigite seu login a ser cadastrato:\n\n");
+		scanf("%s", &login);
+	
+		FILE*file = fopen(login, "r");
+		if (file != NULL)
+		{
+			printf("\t\t\tLogin já cadastrato!\n\n");
+			fclose(file);
+			return;
+		}
+
+		printf("\t\t\tDigite sua senha:\n\n");
+		scanf("%s", &senha);
+	
+		strcpy(arquivo, login);//criando o arquivo para armazenar o login e senha
+		file = fopen(arquivo, "w");
+		fprintf(file, "%s, %s", login, senha);
+		fclose(file);
+	
+		printf("\t\t\tLogin cadastrato com sucesso!\n\n");
+		system("pause");
+	}
+	else
+		printf("\t\t\tSenha incorreta!\n\n");
+	
+}
 
 int registro()//função para cadastrar usuário
 {
@@ -159,8 +237,8 @@ int deletar()//função para deletar usuário
 }
 
 
-int main()//função principal "MENU"
-	{
+int menu()// MENU DO SISTEMA
+{
 	int opcao=0;//declarando a variável
 	int x=1;
 	
@@ -172,7 +250,8 @@ int main()//função principal "MENU"
 		setlocale(LC_ALL, "Portuguese");//utilizado para setar a linguaguem e ativar os acentos
 	
 				
-		printf("\tCARTÓRIO EBAC \n \n");//comando "\t é para dar espaço antes de iniciar o texto
+		printf("\t\t\t***CARTÓRIO EBAC*** \n");//comando "\t é para dar espaço antes de iniciar o texto
+		printf("\tSeja bem vindo ao sistema de cadastro de alunos\n\n");
 		printf("Escolha a opção desejada no menu: \n \n");//comando \n é para dar parágrafo
 		printf("\t1 - Registrar nomes \n");
 		printf("\t2 - Consultar nomes \n");
@@ -198,7 +277,7 @@ int main()//função principal "MENU"
 			case 4:
 				printf("\tVocê escolheu sair\n\n");
 				system("pause");
-				return 0;
+				exit(0);
 				break;
 			default:
 				printf("\tEssa opção não está disponível\n\n");
@@ -210,4 +289,44 @@ int main()//função principal "MENU"
 	
 	return 0;
 	
+}
+
+int main()//função principal, a primeira de todas
+{
+	
+	int opcao=0;//declarando a variavel
+	int x =1;
+
+	while(1)
+		{
+			system("cls");//limpando a tela do sistema
+			
+			setlocale(LC_ALL, "Portuguese");//habilitando a linguagem portugues e acentos
+			
+			printf("\t\t\t***CARTÓRIO EBAC***\n");
+			printf("\tBem vindo ao sistema de cadastro de alunos da Ebac!\n");
+			printf("\tFaça login para acessar o sistema ou cadastre-se.\n");
+			printf("\tDigite sua opção:\n\n1 - Fazer login\n2 - Cadastrar-se\n3 - Sair\n\n");
+			
+			scanf("%d", &opcao);//armazenando a escolha do cliente
+			
+			system("cls");//limpando tela
+			
+			switch(opcao)
+				{
+					case 1:
+						login();
+						break;
+					case 2:
+						cadastro();
+						break;
+					case 3:
+						exit(0);
+						break;
+					default:
+						printf("\t\t\tOpção inválida!\n\t\t\tTente novamente.\n\n");
+				}
+			system("pause");
+		}
+	return 0;
 }
