@@ -146,7 +146,7 @@ int registro()//função para cadastrar usuário
 	fclose(file);
 	
 	fflush(NULL);//força a sincronização do sistema operacional
-	system("timeout 5");// aguarda o tempo para liberar o arquivo
+	system("timeout 1");// aguarda o tempo para liberar o arquivo
 	
 	printf("\n\n");
 	printf("\tCadastro realizado com sucesso!\n\n");
@@ -199,10 +199,108 @@ int consulta()//função para consultar usuario usuário
 		printf("%s", conteudo);
 		printf("\n\n");
 	}
-	
+	fclose(file);
 	system("pause");
 	
 }
+
+
+void atualizar() // Função para atualizar dados dos usuários
+{
+    setlocale(LC_ALL, "Portuguese");
+
+    char cpf[40], nome[40], sobrenome[40], cargo[40];
+    char novocpf[40], cpf_original[40]; // CPF original para referência
+    int opcao;
+
+    printf("\t\t\tDigite o CPF que deseja alterar:\n\n");
+    scanf("%s", cpf);
+
+    FILE *file = fopen(cpf, "r"); // Conferindo se o CPF está cadastrado
+    if (file == NULL)
+    {
+        printf("\tCPF não encontrado!\n\n");
+        system("pause");
+        return;
+    }
+
+    // Lendo os dados do arquivo
+    fscanf(file, "%[^,],%[^,],%[^,],%s", cpf, nome, sobrenome, cargo);
+    fclose(file);
+
+    // Salvamos o CPF original antes de qualquer alteração
+    strcpy(cpf_original, cpf);
+
+    printf("\tInformações atuais:\n\n");
+    printf("1 - CPF: %s\n", cpf);
+    printf("2 - Nome: %s\n", nome);
+    printf("3 - Sobrenome: %s\n", sobrenome);
+    printf("4 - Cargo: %s\n\n", cargo);
+    printf("Digite o número de qual informação deseja alterar: ");
+    scanf("%d", &opcao);
+
+    // Escolhendo a opção de alteração
+    if (opcao == 1)
+    {
+        printf("Digite o novo CPF: ");
+        scanf("%s", novocpf);
+
+        // Verifica se o novo CPF já existe
+        FILE *teste = fopen(novocpf, "r");
+        if (teste != NULL)
+        {
+            printf("\tCPF já cadastrado!\n\n");
+            fclose(teste);
+            return;
+        }
+
+        // Copia o novo CPF para a variável CPF
+        strcpy(cpf, novocpf);
+    }
+    else if (opcao == 2)
+    {
+        printf("Digite o novo nome: ");
+        scanf("%s", nome);
+    }
+    else if (opcao == 3)
+    {
+        printf("Digite o novo sobrenome: ");
+        scanf("%s", sobrenome);
+    }
+    else if (opcao == 4)
+    {
+        printf("Digite o novo cargo: ");
+        scanf("%s", cargo);
+    }
+    else
+    {
+        printf("\tOpção inválida!\n\n");
+        return;
+    }
+
+    // Criamos um novo arquivo com o nome do CPF atualizado
+    file = fopen(cpf, "w");
+    if (file == NULL)
+    {
+        printf("\t\t\tErro ao abrir o arquivo\n\n");
+        return;
+    }
+
+    fprintf(file, "%s,%s,%s,%s", cpf, nome, sobrenome, cargo);
+    fclose(file);
+
+    // **Agora** podemos excluir o arquivo antigo (se o CPF foi alterado)
+    if (opcao == 1)
+    {
+        remove(cpf_original);
+    }
+
+    printf("\t\t\tInformações atualizadas com sucesso!\n\n");
+    system("pause");
+
+    menu();
+}
+	
 
 int deletar()//função para deletar usuário
 {
@@ -255,8 +353,9 @@ int menu()// MENU DO SISTEMA
 		printf("Escolha a opção desejada no menu: \n \n");//comando \n é para dar parágrafo
 		printf("\t1 - Registrar nomes \n");
 		printf("\t2 - Consultar nomes \n");
-		printf("\t3 - Deletar nomes \n");
-		printf("\t4 - Sair\n\n\n");
+		printf("\t3 - Atualizar dados \n");
+		printf("\t4 - Deletar nomes \n");
+		printf("\t5 - Sair\n\n\n");
 		printf("Opção: ");
 
 		scanf("%d", &opcao);// armazenando a escolha do usuário
@@ -272,9 +371,12 @@ int menu()// MENU DO SISTEMA
 				consulta();
 				break;
 			case 3:
-				deletar();
+				atualizar();
 				break;
 			case 4:
+				deletar();
+				break;
+			case 5:
 				printf("\tVocê escolheu sair\n\n");
 				system("pause");
 				exit(0);
